@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="variables.css">
   <link rel="stylesheet" href="components.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
   <style>
     /* Estilos específicos de esta pantalla */
     .chart-card { position: relative; }
@@ -116,13 +117,13 @@
     <div class="nav-item">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       Liberaciones
-      <span class="nav-count">24</span>
+      <span class="nav-count" id="nav-count-lib">221</span>
     </div>
 
     <div class="nav-item">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM12 11v2M8 11v2M16 11v2"/></svg>
       Solicitudes
-      <span class="nav-count">2.880</span>
+      <span class="nav-count" id="nav-count-sol">375</span>
     </div>
 
     <div class="nav-item">
@@ -140,7 +141,7 @@
     <div class="nav-item">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       Pendientes
-      <span class="nav-count" style="background:rgba(192,57,43,.25);color:#f08070">7</span>
+      <span class="nav-count" id="nav-count-pend" style="background:rgba(192,57,43,.25);color:#f08070">27</span>
     </div>
 
     <span class="sidebar-section-label">Configuración</span>
@@ -174,7 +175,7 @@
     <nav class="navbar-breadcrumb">
       <span>Ruta del Sol</span>
       <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-      <span class="current">Dashboard · Enero–Mayo 2026</span>
+      <span class="current">Dashboard · Jun 2026 · TR3 &amp; TR4</span>
     </nav>
   </div>
 
@@ -209,7 +210,7 @@
       <!-- Encabezado de página -->
       <div class="page-header">
         <h1 class="page-title">Control de Obra</h1>
-        <p class="page-subtitle">Tramos 3 y 4 · Enero – Mayo 2026 · 2.880 registros procesados</p>
+        <p class="page-subtitle">Tramos 3 y 4 · Junio 2026 · 375 solicitudes · 221 liberaciones · 3.230 transportes</p>
       </div>
 
       <!-- Filtros -->
@@ -237,42 +238,57 @@
         </div>
       </div>
 
+      <!-- Carga de archivos Excel -->
+      <div class="card" style="margin-bottom:var(--sp-5);border:2px dashed var(--c-border);box-shadow:none">
+        <div class="card-body" style="text-align:center;padding:var(--sp-5)">
+          <input type="file" id="fileInput" multiple accept=".xlsx,.xls" style="display:none" onchange="procesarArchivos(event)">
+          <label for="fileInput" class="btn btn-primary" style="cursor:pointer">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4 4m4-4v12"/></svg>
+            Cargar archivos Excel de Webu
+          </label>
+          <p style="color:var(--c-ink-muted);font-size:var(--text-xs);margin-top:var(--sp-3)">
+            Selecciona los 5 archivos desde Google Drive, Files o Descargas — sin instalar nada
+          </p>
+          <div id="archivosStatus" style="margin-top:var(--sp-3);display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center"></div>
+        </div>
+      </div>
+
       <!-- KPIs -->
       <div class="kpi-grid">
 
-        <div class="card kpi-card primary">
+        <div class="card kpi-card primary" id="kpi-solicitudes">
           <div class="kpi-label">Total Solicitudes</div>
-          <div class="kpi-value">2.880</div>
-          <div class="kpi-sub">Registros TR3 + TR4</div>
+          <div class="kpi-value">375</div>
+          <div class="kpi-sub">TR3: 149 · TR4: 226</div>
         </div>
 
-        <div class="card kpi-card blue">
+        <div class="card kpi-card blue" id="kpi-m3prog">
           <div class="kpi-label">m³ Programado</div>
-          <div class="kpi-value">698K</div>
-          <div class="kpi-sub">698.859 m³ en plan</div>
+          <div class="kpi-value">84.8K</div>
+          <div class="kpi-sub">84.800 m³ en plan</div>
         </div>
 
-        <div class="card kpi-card teal">
+        <div class="card kpi-card teal" id="kpi-m3ejec">
           <div class="kpi-label">m³ Ejecutado</div>
-          <div class="kpi-value">494K</div>
-          <div class="kpi-sub">494.256 m³ reales</div>
+          <div class="kpi-value">57.1K</div>
+          <div class="kpi-sub">57.136 m³ reales</div>
         </div>
 
-        <div class="card kpi-card warning">
+        <div class="card kpi-card warning" id="kpi-cumpl">
           <div class="kpi-label">Cumplimiento Global</div>
-          <div class="kpi-value">70.7%</div>
-          <div class="kpi-sub">Brecha: 204.603 m³</div>
+          <div class="kpi-value">67.4%</div>
+          <div class="kpi-sub">Brecha: 27.664 m³</div>
         </div>
 
-        <div class="card kpi-card success">
+        <div class="card kpi-card success" id="kpi-lib">
           <div class="kpi-label">Liberaciones</div>
-          <div class="kpi-value">763</div>
-          <div class="kpi-sub">Este mes: 42 nuevas</div>
+          <div class="kpi-value">221</div>
+          <div class="kpi-sub">TR3: 77 · TR4: 144</div>
         </div>
 
-        <div class="card kpi-card error">
+        <div class="card kpi-card error" id="kpi-pend">
           <div class="kpi-label">Pendientes</div>
-          <div class="kpi-value">7</div>
+          <div class="kpi-value">27</div>
           <div class="kpi-sub">Requieren acción hoy</div>
         </div>
 
@@ -315,37 +331,37 @@
 
           <div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2)">
-              <span style="font-size:var(--text-sm);font-weight:var(--w-semibold)">Granulares (Subbase + Base)</span>
-              <span class="cumpl-high" style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)">83.2%</span>
+              <span style="font-size:var(--text-sm);font-weight:var(--w-semibold)">Granulares (Subbase + Base + Clasificado)</span>
+              <span id="pct-gran" class="cumpl-mid" style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)">68.1%</span>
             </div>
-            <div class="progress-bar"><div class="progress-fill success" style="width:83.2%"></div></div>
+            <div class="progress-bar"><div id="fill-gran" class="progress-fill warning" style="width:68.1%"></div></div>
             <div style="display:flex;justify-content:space-between;margin-top:4px">
-              <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">312.400 m³ real</span>
-              <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">375.400 m³ prog.</span>
+              <span id="env-gran" style="font-size:var(--text-xs);color:var(--c-ink-muted)">24.942 m³ real</span>
+              <span id="sol-gran" style="font-size:var(--text-xs);color:var(--c-ink-muted)">36.646 m³ prog.</span>
             </div>
           </div>
 
           <div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2)">
-              <span style="font-size:var(--text-sm);font-weight:var(--w-semibold)">Tierras (Terraplén / Corte)</span>
-              <span class="cumpl-mid" style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)">68.5%</span>
+              <span style="font-size:var(--text-sm);font-weight:var(--w-semibold)">Tierras (Terraplén / Corte / Corona)</span>
+              <span id="pct-tier" class="cumpl-mid" style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)">66.7%</span>
             </div>
-            <div class="progress-bar"><div class="progress-fill warning" style="width:68.5%"></div></div>
+            <div class="progress-bar"><div id="fill-tier" class="progress-fill warning" style="width:66.7%"></div></div>
             <div style="display:flex;justify-content:space-between;margin-top:4px">
-              <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">142.100 m³ real</span>
-              <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">207.400 m³ prog.</span>
+              <span id="env-tier" style="font-size:var(--text-xs);color:var(--c-ink-muted)">29.162 m³ real</span>
+              <span id="sol-tier" style="font-size:var(--text-xs);color:var(--c-ink-muted)">43.725 m³ prog.</span>
             </div>
           </div>
 
           <div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2)">
               <span style="font-size:var(--text-sm);font-weight:var(--w-semibold)">Fresado y Residuos</span>
-              <span class="cumpl-low" style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)">41.3%</span>
+              <span id="pct-fres" class="cumpl-mid" style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)">66.2%</span>
             </div>
-            <div class="progress-bar"><div class="progress-fill error" style="width:41.3%"></div></div>
+            <div class="progress-bar"><div id="fill-fres" class="progress-fill warning" style="width:66.2%"></div></div>
             <div style="display:flex;justify-content:space-between;margin-top:4px">
-              <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">39.756 m³ real</span>
-              <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">96.200 m³ prog.</span>
+              <span id="env-fres" style="font-size:var(--text-xs);color:var(--c-ink-muted)">2.285 m³ real</span>
+              <span id="sol-fres" style="font-size:var(--text-xs);color:var(--c-ink-muted)">3.449 m³ prog.</span>
             </div>
           </div>
 
@@ -383,7 +399,7 @@
         </div>
 
         <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:var(--text-xs);color:var(--c-ink-muted)">Mostrando 10 de 763 liberaciones</span>
+          <span id="libFooter" style="font-size:var(--text-xs);color:var(--c-ink-muted)">Mostrando 10 de 221 liberaciones · TR3: 77 · TR4: 144</span>
           <div style="display:flex;gap:var(--sp-2)">
             <button class="btn btn-ghost btn-sm">← Anterior</button>
             <button class="btn btn-ghost btn-sm">Siguiente →</button>
@@ -495,18 +511,20 @@
      JAVASCRIPT
 ============================================================ -->
 <script>
-/* ---- Datos de muestra ---- */
-const liberaciones = [
-  { sol: 33803, fecha: '—',          tramo: '3', hito: 'N160', material: 'MSC-19 Base Asfált.', capa: 'Llegada carpeta asfált.',   ml: 405, estado: 'pendiente'  },
-  { sol: 33790, fecha: '17/06/2026', tramo: '3', hito: 'N160', material: 'Base Reciclada C.',    capa: 'Base Cementada · Capa F.',  ml: 100, estado: 'liberado'   },
-  { sol: 33788, fecha: '17/06/2026', tramo: '3', hito: 'N160', material: 'Base Reciclada C.',    capa: 'Base Cementada · Capa F.',  ml: 100, estado: 'liberado'   },
-  { sol: 33741, fecha: '12/06/2026', tramo: '3', hito: 'M14B', material: 'Subbase',              capa: 'Subbase · Capa Final',      ml: 120, estado: 'liberado'   },
-  { sol: 33730, fecha: '11/06/2026', tramo: '3', hito: 'M11B', material: '—',                    capa: 'Terreno natural',           ml: 150, estado: 'pendiente'  },
-  { sol: 33729, fecha: '11/06/2026', tramo: '3', hito: 'N17D', material: 'Base',                 capa: 'Base · Capa Final',         ml:  90, estado: 'liberado'   },
-  { sol: 33759, fecha: '11/06/2026', tramo: '3', hito: 'N17D', material: 'Terraplén M. Corte',   capa: 'Terraplén · Capa Interm.',  ml:  50, estado: 'liberado'   },
-  { sol: 33568, fecha: '02/06/2026', tramo: '3', hito: 'M14B', material: 'Corona',               capa: 'Corona · Capa Intermedia',  ml: 120, estado: 'rechazado'  },
-  { sol: 33623, fecha: '05/06/2026', tramo: '3', hito: 'M14A', material: 'Base',                 capa: 'Base · Capa Final',         ml: 110, estado: 'liberado'   },
-  { sol: 33591, fecha: '04/06/2026', tramo: '3', hito: 'M11A', material: 'Subbase',              capa: 'Subbase · Reproceso',       ml:  70, estado: 'liberado'   },
+/* ================================================================
+   DATOS INICIALES — Webu · Jun 2026 · TR3 & TR4
+================================================================ */
+let liberaciones = [
+  { sol: 33924, fecha: '20/06/2026', tramo: '4', hito: 'M221', material: '—',               capa: 'Terreno natural', ml:  70, estado: 'rechazado' },
+  { sol: 33927, fecha: '20/06/2026', tramo: '3', hito: 'M14A', material: 'Subbase',         capa: 'Subbase',         ml:  30, estado: 'liberado'  },
+  { sol: 33925, fecha: '20/06/2026', tramo: '4', hito: 'N221', material: '—',               capa: 'Terreno natural', ml:  70, estado: 'pendiente' },
+  { sol: 33875, fecha: '19/06/2026', tramo: '3', hito: 'M11A', material: 'Base',            capa: 'Base',            ml:  38, estado: 'liberado'  },
+  { sol: 33889, fecha: '19/06/2026', tramo: '4', hito: 'N201', material: '—',               capa: 'Terreno natural', ml:  90, estado: 'pendiente' },
+  { sol: 33886, fecha: '19/06/2026', tramo: '3', hito: 'M14B', material: 'Base',            capa: 'Base',            ml: 120, estado: 'liberado'  },
+  { sol: 33884, fecha: '19/06/2026', tramo: '3', hito: 'M11B', material: '—',               capa: 'Terreno natural', ml: 250, estado: 'rechazado' },
+  { sol: 33882, fecha: '19/06/2026', tramo: '3', hito: 'N11B', material: '—',               capa: 'Terreno natural', ml:  60, estado: 'rechazado' },
+  { sol: 33879, fecha: '19/06/2026', tramo: '3', hito: 'N11B', material: '—',               capa: 'Terreno natural', ml:  90, estado: 'pendiente' },
+  { sol: 33878, fecha: '19/06/2026', tramo: '4', hito: 'M181', material: 'Terreno natural', capa: 'Terreno natural', ml: 100, estado: 'liberado'  },
 ];
 
 const badgeMap = {
@@ -515,6 +533,9 @@ const badgeMap = {
   rechazado: '<span class="badge badge-rechazado">Rechazado</span>',
 };
 
+/* ================================================================
+   TABLA
+================================================================ */
 function renderTabla() {
   const tbody = document.getElementById('tablaBody');
   tbody.innerHTML = liberaciones.map(r => `
@@ -531,140 +552,429 @@ function renderTabla() {
       <td style="font-size:var(--text-xs)">${r.material}</td>
       <td style="font-size:var(--text-xs);color:var(--c-ink-muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.capa}</td>
       <td><span class="mono">${r.ml} ml</span></td>
-      <td>${badgeMap[r.estado]}</td>
+      <td>${badgeMap[r.estado] || badgeMap.pendiente}</td>
     </tr>
   `).join('');
 }
 
-/* ---- Gráfica: Prog vs Real por mes ---- */
-function initCharts() {
-  const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May'];
-  const prog  = [142300, 138700, 151200, 136400, 130259];
-  const real  = [ 98200, 105400, 102800,  96500,  91356];
+/* ================================================================
+   CHARTS
+================================================================ */
+let chartMesesInst = null;
+let chartMatInst   = null;
 
-  new Chart(document.getElementById('chartMeses'), {
+function initCharts(
+  meses       = ['May', 'Jun'],
+  prog        = [1362, 83438],
+  real        = [1285, 55852],
+  donutLabels = ['Clasificado','Terraplén','Subbase','Tierra Negra','Corona','Base'],
+  donutData   = [33.6, 33.2, 11.1, 8.6, 7.6, 6.0]
+) {
+  if (chartMesesInst)  { chartMesesInst.destroy();  chartMesesInst  = null; }
+  if (chartMatInst)    { chartMatInst.destroy();     chartMatInst    = null; }
+
+  chartMesesInst = new Chart(document.getElementById('chartMeses'), {
     type: 'bar',
     data: {
       labels: meses,
       datasets: [
-        {
-          label: 'Programado',
-          data: prog,
-          backgroundColor: 'rgba(29,111,164,0.15)',
-          borderColor: '#1d6fa4',
-          borderWidth: 2,
-          borderRadius: 4,
-        },
-        {
-          label: 'Ejecutado',
-          data: real,
-          backgroundColor: 'rgba(46,158,107,0.85)',
-          borderRadius: 4,
-        },
+        { label: 'Programado', data: prog, backgroundColor: 'rgba(29,111,164,0.15)', borderColor: '#1d6fa4', borderWidth: 2, borderRadius: 4 },
+        { label: 'Ejecutado',  data: real, backgroundColor: 'rgba(46,158,107,0.85)', borderRadius: 4 },
       ],
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { font: { family: 'Poppins', size: 10 }, boxWidth: 12, padding: 12 },
-        },
-      },
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { family: 'Poppins', size: 10 }, boxWidth: 12, padding: 12 } } },
       scales: {
         x: { grid: { display: false }, ticks: { font: { family: 'Poppins', size: 11 } } },
-        y: {
-          grid: { color: '#e8e6dc' },
-          ticks: {
-            font: { family: 'JetBrains Mono', size: 10 },
-            callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'K' : v,
-          },
-        },
+        y: { grid: { color: '#e8e6dc' }, ticks: { font: { family: 'JetBrains Mono', size: 10 }, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'K' : v } },
       },
     },
   });
 
-  new Chart(document.getElementById('chartMateriales'), {
+  chartMatInst = new Chart(document.getElementById('chartMateriales'), {
     type: 'doughnut',
     data: {
-      labels: ['Subbase', 'Base', 'Terraplén', 'Fresado', 'B. Reciclada', 'Otros'],
-      datasets: [{
-        data: [38.2, 21.5, 18.8, 10.2, 7.1, 4.2],
-        backgroundColor: ['#2e9e6b','#1d6fa4','#d4a017','#7b3fa0','#16a085','#d97757'],
-        borderWidth: 2,
-        borderColor: '#fff',
-        hoverOffset: 6,
-      }],
+      labels: donutLabels,
+      datasets: [{ data: donutData, backgroundColor: ['#2e9e6b','#1d6fa4','#d4a017','#7b3fa0','#16a085','#d97757'], borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }],
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '62%',
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { font: { family: 'Poppins', size: 10 }, boxWidth: 10, padding: 8 },
-        },
-      },
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: { legend: { position: 'right', labels: { font: { family: 'Poppins', size: 10 }, boxWidth: 10, padding: 8 } } },
     },
   });
 }
 
-/* ---- Modal ---- */
-function openModal() {
-  document.getElementById('modalOverlay').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+/* ================================================================
+   HELPERS DE PARSEO
+================================================================ */
+
+/* Busca un valor en un objeto usando múltiples variantes de nombre de columna.
+   Primero intenta coincidencia exacta, luego case-insensitive. */
+function getCol(row, ...names) {
+  for (const n of names) {
+    const v = row[n];
+    if (v !== undefined && v !== null && v !== '') return v;
+  }
+  const keys = Object.keys(row);
+  for (const n of names) {
+    const nl = n.toLowerCase().trim();
+    const k  = keys.find(k => k.toLowerCase().trim() === nl);
+    if (k && row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];
+  }
+  return '';
 }
 
-function closeModal() {
-  document.getElementById('modalOverlay').style.display = 'none';
-  document.body.style.overflow = '';
+/* Parsea fechas desde objetos Date (cellDates:true) o strings DD/MM/YYYY / ISO */
+function parseDate(v) {
+  if (!v) return null;
+  if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+  const s = String(v).trim();
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) return new Date(`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`);
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
 }
 
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
+/* Normaliza el número de tramo a '3' o '4' desde varias representaciones */
+function tramoNum(v) {
+  const s = String(v || '').trim().toUpperCase().replace(/\s+/g, '');
+  if (/^3$|TRAMO3|TR3/.test(s)) return '3';
+  if (/^4$|TRAMO4|TR4/.test(s)) return '4';
+  return '';
 }
 
-function submitForm() {
-  closeModal();
-  showToast('Liberación registrada exitosamente', 'success');
+/* Normaliza estado de liberación */
+function estadoNorm(v) {
+  const s = String(v || '').toLowerCase().trim();
+  if (s.includes('liber'))  return 'liberado';
+  if (s.includes('rechaz') || s.includes('no aprobad')) return 'rechazado';
+  return 'pendiente';
 }
 
-/* ---- Sidebar móvil ---- */
-function toggleSidebar() {
-  const s = document.getElementById('sidebar');
-  const o = document.getElementById('sidebarOverlay');
-  s.classList.toggle('open');
-  o.classList.toggle('show');
+/* ================================================================
+   CARGA DE EXCEL — funciona en Safari/iPad sin instalar nada
+================================================================ */
+const archivosWebu = {};
+const TIPOS = {
+  lib:       '📋 Liberaciones',
+  sol_mat:   '🪨 Sol. Materiales',
+  sol_asf:   '🛣️ Sol. Asfalto',
+  trans_mat: '🚚 Trans. Mat.',
+  trans_asf: '🚛 Trans. Asf.',
+};
+
+async function procesarArchivos(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+
+  const status = document.getElementById('archivosStatus');
+  status.innerHTML = '<span style="color:var(--c-ink-muted);font-size:var(--text-xs)">Leyendo archivos…</span>';
+
+  const log = [];
+  for (const file of files) {
+    try {
+      const buf  = await file.arrayBuffer();
+      const wb   = XLSX.read(buf, { type: 'array', cellDates: true });
+      const tipo = detectarTipo(wb, file.name);
+      if (tipo) {
+        archivosWebu[tipo] = wb;
+        log.push(`✓ ${file.name} → ${TIPOS[tipo]}`);
+      } else {
+        log.push(`⚠ ${file.name} — no reconocido (hojas: ${wb.SheetNames.join(', ')})`);
+        console.warn('Tipo no reconocido:', file.name, wb.SheetNames);
+      }
+    } catch (e) {
+      log.push(`✗ ${file.name} — error al leer`);
+      console.error('Error leyendo', file.name, e);
+    }
+  }
+
+  console.log('Archivos procesados:\n' + log.join('\n'));
+  renderStatusBadges(status, log);
+
+  if (Object.keys(archivosWebu).length > 0) actualizarDashboard();
 }
 
-/* ---- Chips ---- */
-function toggleChip(el, type) {
-  const parent = el.parentElement;
-  parent.querySelectorAll('.chip').forEach(c => {
-    c.classList.remove('active','active-tr3','active-tr4');
+function detectarTipo(wb, fileName) {
+  const sheets = wb.SheetNames.map(s => s.toLowerCase().trim());
+  const fn     = (fileName || '').toLowerCase();
+
+  // Liberaciones — cualquier hoja que contenga 'liber'
+  if (sheets.some(s => s.includes('liber'))) return 'lib';
+
+  // Solicitudes — hoja que contenga 'solicitud'
+  const esSol = sheets.some(s => s.includes('solicitud'));
+  if (esSol) {
+    const esAsf = sheets.some(s => s.includes('asfalto')) || fn.includes('asfalto');
+    return esAsf ? 'sol_asf' : 'sol_mat';
+  }
+
+  // Transportes — hoja que contenga 'material', 'asfalto', 'transp' o 'frente'
+  const esTrans = sheets.some(s => s.includes('mater') || s.includes('transp') || s.includes('frente'));
+  if (esTrans) {
+    const esAsf = sheets.some(s => s.includes('asfalto')) || fn.includes('asfalto');
+    return esAsf ? 'trans_asf' : 'trans_mat';
+  }
+
+  // Último intento: cualquier hoja con 'asfalto' en el nombre del archivo
+  if (fn.includes('asfalto'))   return 'trans_asf';
+  if (fn.includes('material'))  return 'trans_mat';
+  if (fn.includes('transport')) return 'trans_mat';
+
+  return null;
+}
+
+function renderStatusBadges(container, log) {
+  const badges = Object.entries(TIPOS).map(([tipo, label]) =>
+    archivosWebu[tipo]
+      ? `<span class="badge badge-liberado">${label}</span>`
+      : `<span class="badge" style="background:var(--c-surface);color:var(--c-ink-subtle)">${label}</span>`
+  ).join('');
+  container.innerHTML = badges;
+}
+
+/* ================================================================
+   PARSEO DE HOJAS
+================================================================ */
+
+function parsearLib(wb) {
+  const ws  = wb.Sheets[wb.SheetNames[0]];
+  const all = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+  // Detecta fila de encabezados: busca la primera fila con 'Tramo' o 'Solicitud' o 'Hito'
+  let hdrIdx = 0;
+  for (let i = 0; i < Math.min(6, all.length); i++) {
+    const rowStr = all[i].join(' ').toUpperCase();
+    if (rowStr.includes('TRAMO') || rowStr.includes('SOLICITUD') || rowStr.includes('HITO')) {
+      hdrIdx = i;
+      break;
+    }
+  }
+
+  const hdrs = all[hdrIdx] || [];
+  return all.slice(hdrIdx + 1)
+    .filter(r => r.some(c => c !== '' && c !== null && c !== undefined))
+    .map(r => { const o = {}; hdrs.forEach((h, i) => { if (h) o[String(h).trim()] = r[i]; }); return o; })
+    .filter(r => {
+      const t = tramoNum(getCol(r, 'Tramo', 'TRAMO', 'tramo', 'N° Tramo', 'Num Tramo'));
+      return t === '3' || t === '4';
+    });
+}
+
+function parsearSolicitudes(wb) {
+  // Busca la hoja correcta — cualquier hoja que contenga 'solicitud', o la primera hoja
+  const sheetName = wb.SheetNames.find(s => s.toLowerCase().includes('solicitud')) || wb.SheetNames[0];
+  const ws = wb.Sheets[sheetName];
+  if (!ws) return [];
+  return XLSX.utils.sheet_to_json(ws, { defval: '' })
+    .filter(r => {
+      const dest = String(getCol(r, 'Destino', 'DESTINO', 'destino', 'Tramo Destino', 'Lugar') || '').toUpperCase().replace(/\s+/g,'');
+      return /TRAMO[34]/.test(dest) || /TR[34]\b/.test(dest);
+    });
+}
+
+function parsearTransportes(wb) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  if (!ws) return [];
+  return XLSX.utils.sheet_to_json(ws, { defval: '' })
+    .filter(r => {
+      const f = parseFloat(getCol(r, 'FRENTE', 'Frente', 'frente', 'TRAMO', 'Tramo', 'N° Tramo'));
+      return f === 3 || f === 4;
+    });
+}
+
+/* ================================================================
+   ACTUALIZACIÓN DEL DASHBOARD
+================================================================ */
+function actualizarDashboard() {
+  const lib      = archivosWebu['lib']       ? parsearLib(archivosWebu['lib'])         : liberaciones;
+  const matSol   = archivosWebu['sol_mat']   ? parsearSolicitudes(archivosWebu['sol_mat'])   : [];
+  const asfSol   = archivosWebu['sol_asf']   ? parsearSolicitudes(archivosWebu['sol_asf'])   : [];
+  const transMat = archivosWebu['trans_mat'] ? parsearTransportes(archivosWebu['trans_mat']) : [];
+
+  const allSol = [...matSol, ...asfSol];
+
+  /* ---- KPIs solicitudes ---- */
+  const totalSol = allSol.length;
+  const tr3Sol   = allSol.filter(r => {
+    const d = String(getCol(r, 'Destino', 'DESTINO', 'destino') || '').toUpperCase().replace(/\s+/g,'');
+    return /TRAMO3|TR3/.test(d);
+  }).length;
+  const tr4Sol = totalSol - tr3Sol;
+
+  const m3Prog = matSol.reduce((s, r) => s + (parseFloat(getCol(r, 'Cantidad solicitada', 'Cant. Solicitada', 'CANTIDAD SOLICITADA', 'Volumen')) || 0), 0);
+  const m3Ejec = matSol.reduce((s, r) => s + (parseFloat(getCol(r, 'Cantidad enviada', 'Cant. Enviada', 'CANTIDAD ENVIADA', 'Enviado'))    || 0), 0);
+  const cumpl  = m3Prog > 0 ? m3Ejec / m3Prog * 100 : 0;
+  const brecha = m3Prog - m3Ejec;
+
+  /* ---- KPIs liberaciones (se actualizan siempre) ---- */
+  const totalLib = lib.length;
+  const tr3Lib   = lib.filter(r => tramoNum(getCol(r, 'Tramo', 'TRAMO', 'tramo') || r.tramo) === '3').length;
+  const tr4Lib   = lib.filter(r => tramoNum(getCol(r, 'Tramo', 'TRAMO', 'tramo') || r.tramo) === '4').length;
+  const pend     = lib.filter(r => {
+    const e = String(getCol(r, 'Estado Firmas', 'Estado', 'ESTADO') || r.estado || '').toLowerCase();
+    return e.includes('pendiente') || e === '';
+  }).length;
+
+  setKPI('kpi-lib',  totalLib, `TR3: ${tr3Lib} · TR4: ${tr4Lib}`);
+  setKPI('kpi-pend', pend,     'Requieren acción hoy');
+  document.getElementById('nav-count-lib').textContent  = totalLib;
+  document.getElementById('nav-count-pend').textContent = pend;
+
+  if (totalSol > 0) {
+    setKPI('kpi-solicitudes', totalSol,               `TR3: ${tr3Sol} · TR4: ${tr4Sol}`);
+    setKPI('kpi-m3prog',      fmtK(m3Prog),           `${fmtN(m3Prog)} m³ en plan`);
+    setKPI('kpi-m3ejec',      fmtK(m3Ejec),           `${fmtN(m3Ejec)} m³ reales`);
+    setKPI('kpi-cumpl',       cumpl.toFixed(1) + '%', `Brecha: ${fmtN(brecha)} m³`);
+    document.getElementById('nav-count-sol').textContent = totalSol;
+    document.querySelector('.page-subtitle').textContent =
+      `Tramos 3 y 4 · ${mesHoy()} · ${totalSol} solicitudes · ${totalLib} liberaciones`;
+  }
+
+  /* ---- Barras de progreso ---- */
+  if (matSol.length > 0) actualizarFamilias(matSol);
+
+  /* ---- Gráfica de barras: Programado vs Ejecutado por mes ---- */
+  if (matSol.length > 0) {
+    const byMes = {};
+    matSol.forEach(r => {
+      const d = parseDate(getCol(r, 'Fecha de solicitud', 'Fecha Solicitud', 'Fecha', 'FECHA'));
+      if (!d) return;
+      const k = d.toLocaleDateString('es-CO', { month: 'short', year: '2-digit' });
+      if (!byMes[k]) byMes[k] = { p: 0, r: 0 };
+      byMes[k].p += parseFloat(getCol(r, 'Cantidad solicitada', 'Cant. Solicitada', 'CANTIDAD SOLICITADA')) || 0;
+      byMes[k].r += parseFloat(getCol(r, 'Cantidad enviada',    'Cant. Enviada',    'CANTIDAD ENVIADA'))    || 0;
+    });
+    const meses = Object.keys(byMes);
+    if (meses.length > 0) {
+      initCharts(meses, meses.map(m => Math.round(byMes[m].p)), meses.map(m => Math.round(byMes[m].r)));
+    }
+  }
+
+  /* ---- Gráfica doughnut: distribución por material ---- */
+  if (transMat.length > 0) {
+    const cnt = {};
+    transMat.forEach(r => {
+      const m = String(getCol(r, 'MATERIAL', 'Material', 'material', 'FORMULA', 'Formula') || 'Otros').trim();
+      cnt[m] = (cnt[m] || 0) + 1;
+    });
+    const sorted = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const total  = sorted.reduce((s, [, c]) => s + c, 0);
+    if (chartMatInst && sorted.length > 0) {
+      chartMatInst.data.labels = sorted.map(([m]) => m);
+      chartMatInst.data.datasets[0].data = sorted.map(([, c]) => parseFloat((c / total * 100).toFixed(1)));
+      chartMatInst.update();
+    }
+  }
+
+  /* ---- Tabla de liberaciones recientes ---- */
+  if (archivosWebu['lib']) {
+    const sorted = parsearLib(archivosWebu['lib'])
+      .sort((a, b) => {
+        const da = parseDate(getCol(a, 'Fecha de liberación', 'Fecha Liberacion', 'Fecha'));
+        const db = parseDate(getCol(b, 'Fecha de liberación', 'Fecha Liberacion', 'Fecha'));
+        return (db || 0) - (da || 0);
+      })
+      .slice(0, 10);
+
+    liberaciones = sorted.map(r => {
+      const d = parseDate(getCol(r, 'Fecha de liberación', 'Fecha Liberacion', 'Fecha'));
+      const t = tramoNum(getCol(r, 'Tramo', 'TRAMO', 'tramo'));
+      return {
+        sol:      getCol(r, 'Solicitud', 'N° Solicitud', 'No Solicitud', 'SOL') || '—',
+        fecha:    d ? d.toLocaleDateString('es-CO') : '—',
+        tramo:    t || getCol(r, 'Tramo', 'TRAMO', 'tramo') || '—',
+        hito:     String(getCol(r, 'Hito', 'HITO', 'hito') || '').trim() || '—',
+        material: String(getCol(r, 'Material / Formula', 'Material/Formula', 'Material', 'Formula', 'MATERIAL') || '').trim() || '—',
+        capa:     String(getCol(r, 'Capa', 'CAPA', 'capa') || '').trim(),
+        ml:       Math.abs((parseInt(getCol(r, 'Abscisa Final', 'Ab. Final', 'ABSCISA FIN')) || 0) -
+                           (parseInt(getCol(r, 'Abscisa Inicial', 'Ab. Inicial', 'ABSCISA INI')) || 0)),
+        estado:   estadoNorm(getCol(r, 'Estado Firmas', 'Estado', 'ESTADO')),
+      };
+    });
+
+    renderTabla();
+    document.getElementById('libFooter').textContent =
+      `Mostrando ${sorted.length} de ${totalLib} liberaciones · TR3: ${tr3Lib} · TR4: ${tr4Lib}`;
+  }
+
+  showToast(`Dashboard actualizado — ${totalLib} liberaciones · ${totalSol} solicitudes ✓`, 'success');
+}
+
+/* ---- Helpers ---- */
+function setKPI(id, val, sub) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.querySelector('.kpi-value').textContent = val;
+  if (sub) el.querySelector('.kpi-sub').textContent = sub;
+}
+
+function fmtK(n) { return n >= 1000 ? (n / 1000).toFixed(1) + 'K' : Math.round(n).toString(); }
+function fmtN(n) { return Math.round(n).toLocaleString('es-CO'); }
+function mesHoy() { return new Date().toLocaleDateString('es-CO', { month: 'short', year: 'numeric' }); }
+
+function actualizarFamilias(matSol) {
+  const defs = [
+    { id: 'gran', mats: ['subbase','base','base reciclada','clasificado','granular'] },
+    { id: 'tier', mats: ['terraplen','terraplén','tierra negra','crudo','material existente','corona','corte'] },
+    { id: 'fres', mats: ['fresado','recebo','rap','residuo'] },
+  ];
+  defs.forEach(({ id, mats }) => {
+    const sub = matSol.filter(r => {
+      const m = String(getCol(r, 'Formula / Material', 'Fórmula / Material', 'Material', 'MATERIAL', 'Formula', 'FORMULA') || '').toLowerCase().trim();
+      return mats.some(pat => m.includes(pat));
+    });
+    const sol = sub.reduce((s, r) => s + (parseFloat(getCol(r, 'Cantidad solicitada', 'Cant. Solicitada', 'CANTIDAD SOLICITADA')) || 0), 0);
+    const env = sub.reduce((s, r) => s + (parseFloat(getCol(r, 'Cantidad enviada',    'Cant. Enviada',    'CANTIDAD ENVIADA'))    || 0), 0);
+    const pct = sol > 0 ? env / sol * 100 : 0;
+    const pctS  = pct.toFixed(1) + '%';
+    const color = pct >= 80 ? 'cumpl-high' : pct >= 60 ? 'cumpl-mid' : 'cumpl-low';
+    const fill  = pct >= 80 ? 'success'    : pct >= 60 ? 'warning'   : 'error';
+
+    const pctEl  = document.getElementById('pct-'  + id);
+    const fillEl = document.getElementById('fill-' + id);
+    const envEl  = document.getElementById('env-'  + id);
+    const solEl  = document.getElementById('sol-'  + id);
+
+    if (pctEl)  { pctEl.textContent = pctS; pctEl.className = color; pctEl.style.cssText = 'font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--w-bold)'; }
+    if (fillEl) { fillEl.style.width = pctS; fillEl.className = `progress-fill ${fill}`; }
+    if (envEl)  envEl.textContent = fmtN(env) + ' m³ real';
+    if (solEl)  solEl.textContent = fmtN(sol) + ' m³ prog.';
   });
-  const cls = type === 'tr3' ? 'active-tr3' : type === 'tr4' ? 'active-tr4' : 'active';
-  el.classList.add(cls);
 }
 
-/* ---- Toast ---- */
+/* ================================================================
+   MODAL / SIDEBAR / CHIPS / TOAST
+================================================================ */
+function openModal()  { document.getElementById('modalOverlay').style.display='flex'; document.body.style.overflow='hidden'; }
+function closeModal() { document.getElementById('modalOverlay').style.display='none'; document.body.style.overflow=''; }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+function submitForm() { closeModal(); showToast('Liberación registrada exitosamente', 'success'); }
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
+function toggleChip(el, type) {
+  el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active', 'active-tr3', 'active-tr4'));
+  el.classList.add(type === 'tr3' ? 'active-tr3' : type === 'tr4' ? 'active-tr4' : 'active');
+}
+
 function showToast(msg, type = 'default') {
-  const container = document.getElementById('toastContainer');
   const t = document.createElement('div');
   t.className = `toast toast-${type}`;
-  t.innerHTML = `
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
-    ${msg}
-  `;
-  container.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = '0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
+  t.innerHTML = `<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> ${msg}`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = '.3s'; setTimeout(() => t.remove(), 300); }, 4000);
 }
 
-/* ---- Inicializar ---- */
+/* ================================================================
+   INIT
+================================================================ */
 renderTabla();
-initCharts();
+try { initCharts(); } catch (e) { console.warn('Chart.js no disponible (sin conexión):', e); }
 </script>
 </body>
 </html>
