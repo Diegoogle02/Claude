@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infográfico — Liberaciones de Capas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --c-bg:       #07090f;
+  --c-surface:  #0d1117;
+  --c-card:     #161b22;
+  --c-border:   #21262d;
+  --c-text:     #e6edf3;
+  --c-muted:    #7d8590;
+  --c-accent:   #58a6ff;
+  --c-green:    #3fb950;
+  --c-yellow:   #d29922;
+  --c-orange:   #db6d28;
+  --c-red:      #f85149;
+  --c-purple:   #bc8cff;
+  --c-teal:     #39d353;
+  --w: 720px;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── WRAPPER ── */
+.page {
+  max-width: var(--w);
+  margin: 0 auto;
+  padding: 0 0 80px;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  padding: 64px 40px 56px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0d1117 0%, #0a1628 60%, #07090f 100%);
+  border-bottom: 1px solid var(--c-border);
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(88,166,255,.08) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 20% 80%, rgba(63,185,80,.06) 0%, transparent 60%);
+}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  background: rgba(88,166,255,.1);
+  border: 1px solid rgba(88,166,255,.25);
+  color: var(--c-accent);
+  font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero-tag span { width:6px;height:6px;border-radius:50%;background:var(--c-accent);animation:blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.hero h1 {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #e6edf3 30%, #58a6ff 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  color: var(--c-muted); font-size: 15px;
+  margin-bottom: 28px;
+}
+.hero-pills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--c-border);
+  padding: 5px 12px; border-radius: 8px;
+  font-size: 12px; color: var(--c-muted);
+}
+.pill b { color: var(--c-text); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 10px;
+  padding: 40px 40px 0;
+  margin-bottom: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--c-muted);
+}
+.section-label::before {
+  content:'';
+  display:block; width:3px; height:18px; border-radius:2px;
+  background: var(--accent-color, var(--c-accent));
+  box-shadow: 0 0 8px var(--accent-color, var(--c-accent));
+}
+.section-label::after {
+  content:''; flex:1; height:1px; background:var(--c-border);
+}
+
+/* ── KPI STRIP ── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 1px;
+  background: var(--c-border);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+}
+.kpi-cell {
+  background: var(--c-surface);
+  padding: 20px 16px;
+  text-align: center;
+}
+.kpi-cell .val {
+  font-size: 26px; font-weight: 900; line-height: 1;
+  margin-bottom: 4px;
+}
+.kpi-cell .lbl {
+  font-size: 9px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--c-muted);
+}
+.kpi-cell .sub { font-size: 10px; color: var(--c-muted); margin-top: 4px; }
+
+/* ── PADDED CONTENT ── */
+.pad { padding: 0 40px; }
+
+/* ── CICLOS ── */
+.ciclos-intro {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.flow-step {
+  text-align: center;
+  position: relative;
+}
+.flow-step:not(:last-child)::after {
+  content: '→';
+  position: absolute; right: -14px; top: 50%; transform: translateY(-60%);
+  color: var(--c-muted); font-size: 18px;
+}
+.flow-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin: 0 auto 8px;
+}
+.flow-step h4 { font-size: 12px; font-weight: 700; }
+.flow-step p  { font-size: 10px; color: var(--c-muted); margin-top: 2px; }
+.flow-step .badge-cal {
+  font-size: 9px; color: var(--c-yellow);
+  background: rgba(210,153,34,.12); border: 1px solid rgba(210,153,34,.25);
+  border-radius: 4px; padding: 1px 5px; margin-top: 4px; display: inline-block;
+}
+
+/* Barra de ciclo */
+.capa-row {
+  margin-bottom: 14px;
+}
+.capa-row .header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.capa-nombre {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600;
+}
+.capa-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.capa-nums {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; color: var(--c-muted);
+}
+.capa-nums .prom { font-size: 15px; font-weight: 800; }
+
+.bar-track {
+  height: 28px;
+  background: rgba(255,255,255,.04);
+  border-radius: 6px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+.bar-seg {
+  height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+  color: rgba(255,255,255,.8);
+  transition: opacity .2s;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.bar-seg:hover { opacity: .85; }
+.seg-prod  { background: linear-gradient(90deg,#1d4ed8,#3b82f6); }
+.seg-topo  { background: linear-gradient(90deg,#7c3aed,#a78bfa); }
+.seg-lab   { background: linear-gradient(90deg,#b45309,#f59e0b); }
+.seg-cal   { background: linear-gradient(90deg,#065f46,#10b981); }
+
+.bar-leyenda {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.bar-leyenda-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; color: var(--c-muted);
+}
+.bar-leyenda-dot {
+  width: 10px; height: 10px; border-radius: 3px;
+}
+
+.ciclo-callout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 16px;
+}
+.callout-box {
+  border-radius: 10px; padding: 14px 16px;
+  border: 1px solid;
+}
+.callout-box.fast {
+  background: rgba(63,185,80,.07);
+  border-color: rgba(63,185,80,.25);
+}
+.callout-box.slow {
+  background: rgba(248,81,73,.07);
+  border-color: rgba(248,81,73,.25);
+}
+.callout-box .tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.callout-box.fast .tag { color: var(--c-green); }
+.callout-box.slow .tag { color: var(--c-red); }
+.callout-box h3 { font-size: 18px; font-weight: 900; }
+.callout-box.fast h3 { color: var(--c-green); }
+.callout-box.slow h3 { color: var(--c-red); }
+.callout-box p { font-size: 11px; color: var(--c-muted); margin-top: 3px; }
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px; background: var(--c-border);
+  margin: 36px 40px;
+}
+
+/* ── TRAMOS ── */
+.tramo-compare {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.tramo-box {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 14px; padding: 20px;
+}
+.tramo-box .num {
+  font-size: 42px; font-weight: 900; line-height: 1;
+  margin-bottom: 2px;
+}
+.tramo-box .t-label { font-size: 11px; color: var(--c-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.tramo-box .t-ml { font-size: 13px; font-weight: 700; margin-top: 10px; }
+.tramo-box .t-sub { font-size: 11px; color: var(--c-muted); }
+.tramo-pb { height: 8px; border-radius: 4px; background: rgba(255,255,255,.06); margin-top: 12px; overflow:hidden; }
+.tramo-fill { height:100%; border-radius:4px; }
+.tramo-chips { display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }
+.chip-sm {
+  font-size: 10px; padding: 2px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--c-muted);
+}
+.chip-sm.ok  { background:rgba(63,185,80,.1);border-color:rgba(63,185,80,.25);color:#7ee787; }
+.chip-sm.bad { background:rgba(248,81,73,.1);border-color:rgba(248,81,73,.25);color:#ffa198; }
+
+/* ── HITOS GRID ── */
+.hitos-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.hito {
+  border-radius: 10px; padding: 12px 8px;
+  text-align: center; border: 1px solid;
+  transition: transform .15s;
+}
+.hito:hover { transform: scale(1.04); }
+.hito.v { background:rgba(63,185,80,.08);  border-color:rgba(63,185,80,.25); }
+.hito.a { background:rgba(210,153,34,.07); border-color:rgba(210,153,34,.25); }
+.hito.n { background:rgba(219,109,40,.08); border-color:rgba(219,109,40,.25); }
+.hito.r { background:rgba(248,81,73,.1);   border-color:rgba(248,81,73,.3); }
+.hito .h-name { font-size:15px;font-weight:900;letter-spacing:-0.5px; }
+.hito .h-pct  { font-size:20px;font-weight:900;line-height:1.2; }
+.hito.v .h-pct { color:var(--c-green); }
+.hito.a .h-pct { color:var(--c-yellow); }
+.hito.n .h-pct { color:var(--c-orange); }
+.hito.r .h-pct { color:var(--c-red); }
+.hito .h-meta { font-size:9px;color:var(--c-muted);margin-top:2px; }
+.hito-pulse {
+  width:6px;height:6px;border-radius:50%;margin:0 auto 6px;
+}
+.hito.v .hito-pulse { background:var(--c-green);box-shadow:0 0 6px var(--c-green); }
+.hito.a .hito-pulse { background:var(--c-yellow);box-shadow:0 0 6px var(--c-yellow); }
+.hito.n .hito-pulse { background:var(--c-orange);box-shadow:0 0 6px var(--c-orange); }
+.hito.r .hito-pulse { background:var(--c-red);box-shadow:0 0 6px var(--c-red);animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+.hito-legend { display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px; }
+.hl-item { display:flex;align-items:center;gap:5px;font-size:11px;color:var(--c-muted); }
+.hl-dot { width:8px;height:8px;border-radius:50%; }
+
+/* ── UBICACIÓN ── */
+.ubi-list { display:grid;gap:10px; }
+.ubi-row {
+  background: var(--c-card); border:1px solid var(--c-border);
+  border-radius:12px; padding:14px 18px;
+}
+.ubi-row .top {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px;
+}
+.ubi-row .top h4 { font-size:13px;font-weight:700; }
+.ubi-row .top .pct-badge {
+  font-size:13px;font-weight:800;
+  padding:3px 10px; border-radius:8px;
+}
+.ubi-row .meta { font-size:11px;color:var(--c-muted);margin-bottom:8px; }
+.ubi-track { height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;display:flex; }
+.ubi-lib  { background:linear-gradient(90deg,#1d7a3d,#3fb950);border-radius:5px 0 0 5px; }
+.ubi-rech { background:rgba(248,81,73,.6); }
+.ubi-pend { background:rgba(210,153,34,.5);border-radius:0 5px 5px 0; }
+.ubi-track-label { display:flex;gap:12px;margin-top:5px;font-size:9px;color:var(--c-muted); }
+.ubi-track-label span { display:flex;align-items:center;gap:3px; }
+.ubi-track-label span::before { content:'';width:6px;height:6px;border-radius:2px; }
+.l-lib::before  { background:#3fb950; }
+.l-rech::before { background:rgba(248,81,73,.8); }
+.l-pend::before { background:rgba(210,153,34,.6); }
+
+/* ── SOLICITANTES ── */
+.sol-list { display:grid;gap:10px; }
+.sol-row {
+  background:var(--c-card); border:1px solid var(--c-border);
+  border-radius:14px; padding:16px 20px;
+  display:grid; grid-template-columns:40px 1fr;
+  gap:14px; align-items:start;
+}
+.sol-medal {
+  width:40px; height:40px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:900;
+  flex-shrink:0;
+}
+.sol-body h4 { font-size:13px;font-weight:700;margin-bottom:2px; }
+.sol-body .s-meta { font-size:11px;color:var(--c-muted);margin-bottom:10px; }
+.sol-metrics { display:flex;gap:20px;flex-wrap:wrap;margin-bottom:10px; }
+.sol-m .v { font-size:18px;font-weight:800; }
+.sol-m .l { font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-muted); }
+.sol-bar { height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden; }
+.sol-fill { height:100%;border-radius:3px; }
+.badge-best {
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);
+  color:#7ee787;font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;
+  letter-spacing:.5px;text-transform:uppercase;margin-left:6px;
+}
+.badge-warn {
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.25);
+  color:#ffa198;font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;
+  letter-spacing:.5px;text-transform:uppercase;margin-left:6px;
+}
+
+/* ── ALERTAS FINALES ── */
+.alerts { display:grid;gap:10px;margin-top:4px; }
+.alert-box {
+  border-radius:12px; padding:16px 18px;
+  border:1px solid; display:flex;gap:12px;
+}
+.alert-box.crit { background:rgba(248,81,73,.06);border-color:rgba(248,81,73,.2); }
+.alert-box.warn { background:rgba(210,153,34,.06);border-color:rgba(210,153,34,.2); }
+.alert-box.info { background:rgba(88,166,255,.06);border-color:rgba(88,166,255,.2); }
+.alert-box .ic { font-size:20px;flex-shrink:0;margin-top:1px; }
+.alert-box h4 { font-size:13px;font-weight:700;margin-bottom:3px; }
+.alert-box.crit h4 { color:var(--c-red); }
+.alert-box.warn h4 { color:var(--c-yellow); }
+.alert-box.info h4 { color:var(--c-accent); }
+.alert-box p { font-size:12px;color:var(--c-muted); }
+.alert-box p b { color:var(--c-text); }
+
+/* ── FOOTER ── */
+.footer {
+  text-align:center; padding:40px 40px 0;
+  border-top:1px solid var(--c-border);
+  color:var(--c-muted); font-size:11px; line-height:2;
+}
+.footer b { color:var(--c-accent); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-tag"><span></span> Control de Obra</div>
+  <h1>Liberaciones de Capas<br>Movimiento de Suelos</h1>
+  <p class="hero-sub">Infográfico de rendimiento y ciclos de tiempo · Análisis sin capas asfálticas</p>
+  <div class="hero-pills">
+    <span class="pill">📅 <b>01 — 27 Jun 2026</b></span>
+    <span class="pill">🛣️ Tramos <b>3</b> y <b>4</b></span>
+    <span class="pill">📋 <b>275</b> solicitudes</span>
+    <span class="pill">📏 <b>19,995 ml</b> analizados</span>
+    <span class="pill">⚠️ Asfalto separado</span>
+  </div>
+</div>
+
+<!-- ═══ KPIs STRIP ═══ -->
+<div class="kpi-strip">
+  <div class="kpi-cell">
+    <div class="val" style="color:#58a6ff">275</div>
+    <div class="lbl">Solicitudes</div>
+    <div class="sub">26 días</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="val" style="color:#3fb950">77.5%</div>
+    <div class="lbl">Liberado</div>
+    <div class="sub">15,490 ml</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="val" style="color:#f85149">14.3%</div>
+    <div class="lbl">Rechazado</div>
+    <div class="sub">2,867 ml</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="val" style="color:#d29922">673</div>
+    <div class="lbl">ml / día</div>
+    <div class="sub">pico 2,981</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="val" style="color:#bc8cff">3.6h</div>
+    <div class="lbl">Ciclo med.</div>
+    <div class="sub">prom 13.3h</div>
+  </div>
+</div>
+
+<!-- ═══ CICLOS POR CAPA ═══ -->
+<div class="section-label" style="--accent-color:#f59e0b">⏱ Análisis de Ciclos por Capa</div>
+<div class="pad">
+
+  <!-- Explicación del flujo -->
+  <div class="ciclos-intro">
+    <div class="flow-step">
+      <div class="flow-icon" style="background:rgba(59,130,246,.15)">🏗️</div>
+      <h4>Producción</h4>
+      <p>Inicio del ciclo<br>Quién solicita</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon" style="background:rgba(167,139,250,.15)">📐</div>
+      <h4>Topografía</h4>
+      <p>Verificación<br>de niveles</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon" style="background:rgba(245,158,11,.15)">🧪</div>
+      <h4>Laboratorio</h4>
+      <p>Ensayos<br>de material</p>
+      <div class="badge-cal">Fin en TN / Terraplén</div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--c-muted);margin-bottom:18px;padding-left:2px">
+    ★ <b style="color:#10b981">Base</b> y <b style="color:#10b981">Base Cementada</b> también incluyen firma de <b style="color:#10b981">Calidad</b> como paso final.
+    El resto termina en Laboratorio.
+  </p>
+
+  <!-- Leyenda colores de segmentos -->
+  <div class="bar-leyenda">
+    <div class="bar-leyenda-item"><div class="bar-leyenda-dot seg-prod" style="width:10px;height:10px;border-radius:2px"></div> Prod→Topo</div>
+    <div class="bar-leyenda-item"><div class="bar-leyenda-dot seg-topo" style="width:10px;height:10px;border-radius:2px"></div> Topo→Lab</div>
+    <div class="bar-leyenda-item"><div class="bar-leyenda-dot seg-lab"  style="width:10px;height:10px;border-radius:2px"></div> Lab→Cal</div>
+    <div class="bar-leyenda-item" style="color:var(--c-muted)">· escala máx = 40h ·</div>
+  </div>
+
+  <!-- MAX = 40h para la escala visual -->
+  <!-- Terreno natural: prod→topo=31.6h, topo→lab=34.8h (de los que aplica) = CICLO=34.6h prom -->
+  <!-- Base Cementada: prod→topo=10.2, topo→lab=12.7, lab→cal=14.2 = CICLO=29.7h -->
+  <!-- Terraplen: prod→topo=26.1, topo→lab=1.9 = CICLO=13.0h -->
+  <!-- Base: prod→topo=5.9, topo→lab=2.8, lab→cal=5.5 = CICLO=10.2h -->
+  <!-- Corona: prod→topo=18.0, topo→lab=8.2 = CICLO=8.6h -->
+  <!-- Subbase: prod→topo=13.6, topo→lab=5.0 = CICLO=5.0h -->
+  <!-- Lleno: CICLO=3.8h -->
+  <!-- Mejoramiento: prod→topo=3.8, topo→lab=1.3 = CICLO=2.2h -->
+
+  <!-- 1. Terreno natural -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#f85149;box-shadow:0 0 6px #f85149"></div>
+        Terreno natural
+      </div>
+      <div class="capa-nums">
+        <span>n=27 · 4,395 ml · 36% rechazos · Calidad NO aplica</span>
+        <span class="prom" style="color:#f85149">34.6h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <!-- Prod→Topo: 31.6/40 = 79% -->
+      <div class="bar-seg seg-prod" style="width:79%">Prod→Topo 31.6h</div>
+      <!-- Topo→Lab: el restante promedio de los que tienen = la diferencia ciclo-prod_topo ~3h -->
+      <div class="bar-seg seg-topo" style="width:7.5%"></div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+    <div style="font-size:10px;color:var(--c-muted);margin-top:4px;display:flex;gap:16px">
+      <span>Prod→Topo: <b style="color:#f85149">31.6h</b> prom · médiana 13.6h</span>
+      <span>Topo→Lab: <b style="color:#f85149">34.8h</b> prom · médiana 4.0h (solo con datos)</span>
+      <span>P90: 104h ⚠️</span>
+    </div>
+  </div>
+
+  <!-- 2. Base Cementada -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#db6d28;box-shadow:0 0 6px #db6d28"></div>
+        Base Cementada
+      </div>
+      <div class="capa-nums">
+        <span>n=12 · 1,069 ml · 0% rechazos · Calidad SI aplica</span>
+        <span class="prom" style="color:#db6d28">29.7h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <!-- Prod→Topo: 10.2/40=25.5% -->
+      <div class="bar-seg seg-prod" style="width:25.5%">Prod 10.2h</div>
+      <!-- Topo→Lab: 12.7/40=31.75% -->
+      <div class="bar-seg seg-topo" style="width:31.75%">Topo 12.7h</div>
+      <!-- Lab→Cal: 14.2/40=35.5% -->
+      <div class="bar-seg seg-lab" style="width:35.5%">Lab→Cal 14.2h</div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+    <div style="font-size:10px;color:var(--c-muted);margin-top:4px;display:flex;gap:16px">
+      <span>Prod→Topo: <b>10.2h</b></span>
+      <span>Topo→Lab: <b>12.7h</b></span>
+      <span>Lab→Cal: <b style="color:#db6d28">14.2h</b> ← cuello</span>
+    </div>
+  </div>
+
+  <!-- 3. Terraplén -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#d29922;box-shadow:0 0 6px #d29922"></div>
+        Terraplén
+      </div>
+      <div class="capa-nums">
+        <span>n=61 · 5,117 ml · 11% rechazos · Calidad NO aplica</span>
+        <span class="prom" style="color:#d29922">13.0h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <!-- Prod→Topo: 26.1/40=65.25% -->
+      <div class="bar-seg seg-prod" style="width:65.25%">Prod→Topo 26.1h</div>
+      <!-- Topo→Lab: 1.9/40=4.75% -->
+      <div class="bar-seg seg-topo" style="width:4.75%"></div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+    <div style="font-size:10px;color:var(--c-muted);margin-top:4px;display:flex;gap:16px">
+      <span>Prod→Topo: <b style="color:#d29922">26.1h</b> prom (med 18.7h) ← cuello</span>
+      <span>Topo→Lab: <b>1.9h</b></span>
+      <span>P90: 45.8h</span>
+    </div>
+  </div>
+
+  <!-- 4. Base -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#58a6ff;box-shadow:0 0 6px #58a6ff"></div>
+        Base
+      </div>
+      <div class="capa-nums">
+        <span>n=28 · 2,940 ml · 17% rechazos · Calidad SI aplica</span>
+        <span class="prom" style="color:#58a6ff">10.2h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-seg seg-prod" style="width:14.75%">5.9h</div>
+      <div class="bar-seg seg-topo" style="width:7%">2.8h</div>
+      <div class="bar-seg seg-lab" style="width:13.75%">5.5h</div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+    <div style="font-size:10px;color:var(--c-muted);margin-top:4px;display:flex;gap:16px">
+      <span>Prod→Topo: 5.9h</span>
+      <span>Topo→Lab: 2.8h</span>
+      <span>Lab→Cal: 5.5h</span>
+    </div>
+  </div>
+
+  <!-- 5. Corona -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#a78bfa;box-shadow:0 0 6px #a78bfa"></div>
+        Corona
+      </div>
+      <div class="capa-nums">
+        <span>n=16 · 1,656 ml · 5% rechazos · Calidad NO aplica</span>
+        <span class="prom" style="color:#a78bfa">8.6h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-seg seg-prod" style="width:45%">Prod→Topo 18.0h</div>
+      <div class="bar-seg seg-topo" style="width:20.5%">Topo 8.2h</div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+    <div style="font-size:10px;color:var(--c-muted);margin-top:4px;display:flex;gap:16px">
+      <span>Prod→Topo: <b>18.0h</b> prom (médiana 12.1h)</span>
+      <span>Topo→Lab: 8.2h</span>
+    </div>
+  </div>
+
+  <!-- 6. Subbase -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#39d353;box-shadow:0 0 6px #39d353"></div>
+        Subbase
+      </div>
+      <div class="capa-nums">
+        <span>n=43 · 4,119 ml · 14% rechazos · Calidad NO aplica</span>
+        <span class="prom" style="color:#39d353">5.0h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-seg seg-prod" style="width:34%">Prod→Topo 13.6h</div>
+      <div class="bar-seg seg-topo" style="width:12.5%">5.0h</div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+  </div>
+
+  <!-- 7. Lleno alcantarilla -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#3fb950;box-shadow:0 0 6px #3fb950"></div>
+        Lleno de Alcantarilla
+      </div>
+      <div class="capa-nums">
+        <span>n=9 · 69 ml · 0% rechazos</span>
+        <span class="prom" style="color:#3fb950">3.8h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-seg seg-prod" style="width:9.5%;background:linear-gradient(90deg,#1d7a3d,#3fb950)">3.8h</div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+  </div>
+
+  <!-- 8. Mejoramiento -->
+  <div class="capa-row">
+    <div class="header">
+      <div class="capa-nombre">
+        <div class="capa-dot" style="background:#3fb950;box-shadow:0 0 6px #3fb950"></div>
+        Mejoramiento
+      </div>
+      <div class="capa-nums">
+        <span>n=13 · 365 ml · 0% rechazos</span>
+        <span class="prom" style="color:#3fb950">2.2h</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-seg seg-prod" style="width:5.5%;background:linear-gradient(90deg,#1d7a3d,#3fb950)"></div>
+      <div style="flex:1;background:rgba(255,255,255,.02)"></div>
+    </div>
+  </div>
+
+  <!-- Callouts -->
+  <div class="ciclo-callout">
+    <div class="callout-box fast">
+      <div class="tag">⚡ Más eficiente</div>
+      <h3>Mejoramiento</h3>
+      <p>Ciclo promedio <b>2.2h</b> · mediana <b>1.0h</b><br>0% rechazos · Termina en Laboratorio</p>
+    </div>
+    <div class="callout-box slow">
+      <div class="tag">🐢 Mayor ciclo</div>
+      <h3>Terreno natural</h3>
+      <p>Ciclo promedio <b>34.6h</b> · P90 = <b>104h</b><br>36% rechazos · Cuello: Laboratorio</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ TRAMOS ═══ -->
+<div class="section-label" style="--accent-color:#d29922">🛣️ Rendimiento por Tramo</div>
+<div class="pad">
+  <div class="tramo-compare">
+
+    <div class="tramo-box">
+      <div class="t-label">Tramo</div>
+      <div class="num" style="color:#58a6ff">3</div>
+      <div class="tramo-pb"><div class="tramo-fill" style="width:84%;background:linear-gradient(90deg,#1d4ed8,#3b82f6)"></div></div>
+      <div class="t-ml"><span style="color:#3fb950">84.0%</span> liberado</div>
+      <div class="t-sub">4,867 ml de 5,797 ml · 99 solicitudes</div>
+      <div class="tramo-chips" style="margin-top:10px">
+        <span class="chip-sm ok">B.Cementada 100%</span>
+        <span class="chip-sm ok">Terraplén 100%</span>
+        <span class="chip-sm bad">TN 51%</span>
+        <span class="chip-sm">9 rechazos</span>
+      </div>
+    </div>
+
+    <div class="tramo-box">
+      <div class="t-label">Tramo</div>
+      <div class="num" style="color:#a78bfa">4</div>
+      <div class="tramo-pb"><div class="tramo-fill" style="width:74.8%;background:linear-gradient(90deg,#6d28d9,#a78bfa)"></div></div>
+      <div class="t-ml"><span style="color:#d29922">74.8%</span> liberado</div>
+      <div class="t-sub">10,623 ml de 14,198 ml · 176 solicitudes</div>
+      <div class="tramo-chips" style="margin-top:10px">
+        <span class="chip-sm ok">Mejoramiento 100%</span>
+        <span class="chip-sm bad">Subbase 70%</span>
+        <span class="chip-sm bad">TN 61%</span>
+        <span class="chip-sm">32 rechazos</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ HITOS SEMÁFORO ═══ -->
+<div class="section-label" style="--accent-color:#3fb950">🚦 Hitos — Semáforo de Liberación</div>
+<div class="pad">
+  <div class="hito-legend">
+    <div class="hl-item"><div class="hl-dot" style="background:#3fb950;box-shadow:0 0 5px #3fb950"></div>Verde 100%</div>
+    <div class="hl-item"><div class="hl-dot" style="background:#d29922;box-shadow:0 0 5px #d29922"></div>Amarillo 60–99%</div>
+    <div class="hl-item"><div class="hl-dot" style="background:#db6d28;box-shadow:0 0 5px #db6d28"></div>Naranja 10–59%</div>
+    <div class="hl-item"><div class="hl-dot" style="background:#f85149;box-shadow:0 0 5px #f85149;animation:pulse 1s infinite"></div>Rojo 0% crítico</div>
+  </div>
+
+  <div class="hitos-container">
+    <!-- ROJOS primero -->
+    <div class="hito r"><div class="hito-pulse"></div><div class="h-name">N11B</div><div class="h-pct">0%</div><div class="h-meta">3 sols · 250ml · 3🚫</div></div>
+    <div class="hito r"><div class="hito-pulse"></div><div class="h-name">M221</div><div class="h-pct">0%</div><div class="h-meta">3 sols · 208ml · 3🚫</div></div>
+    <div class="hito r"><div class="hito-pulse"></div><div class="h-name">N190</div><div class="h-pct">0%</div><div class="h-meta">3 sols · 45ml · 3🚫</div></div>
+    <!-- NARANJAS -->
+    <div class="hito n"><div class="hito-pulse"></div><div class="h-name">M14C</div><div class="h-pct">14%</div><div class="h-meta">2 sols · 64ml</div></div>
+    <div class="hito n"><div class="hito-pulse"></div><div class="h-name">N22A</div><div class="h-pct">25%</div><div class="h-meta">4 sols · 480ml</div></div>
+    <div class="hito n"><div class="hito-pulse"></div><div class="h-name">N18C</div><div class="h-pct">40%</div><div class="h-meta">6 sols · 100ml</div></div>
+    <!-- AMARILLOS -->
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">M140</div><div class="h-pct">66%</div><div class="h-meta">7 sols · 220ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">N23C</div><div class="h-pct">67%</div><div class="h-meta">16 sols · 1,783ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">N21A</div><div class="h-pct">72%</div><div class="h-meta">16 sols · 745ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">M11B</div><div class="h-pct">76%</div><div class="h-meta">11 sols · 1,605ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">M181</div><div class="h-pct">78%</div><div class="h-meta">44 sols · 3,154ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">N221</div><div class="h-pct">79%</div><div class="h-meta">31 sols · 3,429ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">M202</div><div class="h-pct">80%</div><div class="h-meta">41 sols · 3,164ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">M14B</div><div class="h-pct">80%</div><div class="h-meta">5 sols · 600ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">M14A</div><div class="h-pct">89%</div><div class="h-meta">11 sols · 440ml</div></div>
+    <div class="hito a"><div class="hito-pulse"></div><div class="h-name">N201</div><div class="h-pct">94%</div><div class="h-meta">12 sols · 1,090ml</div></div>
+    <!-- VERDES -->
+    <div class="hito v"><div class="hito-pulse"></div><div class="h-name">N160</div><div class="h-pct">100%</div><div class="h-meta">12 sols · 1,069ml</div></div>
+    <div class="hito v"><div class="hito-pulse"></div><div class="h-name">N17D</div><div class="h-pct">100%</div><div class="h-meta">22 sols · 715ml</div></div>
+    <div class="hito v"><div class="hito-pulse"></div><div class="h-name">M11A</div><div class="h-pct">100%</div><div class="h-meta">17 sols · 589ml</div></div>
+    <div class="hito v"><div class="hito-pulse"></div><div class="h-name">M110</div><div class="h-pct">100%</div><div class="h-meta">8 sols · 235ml</div></div>
+    <div class="hito v"><div class="hito-pulse"></div><div class="h-name">N140</div><div class="h-pct">100%</div><div class="h-meta">1 sol · 10ml</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ UBICACIÓN ═══ -->
+<div class="section-label" style="--accent-color:#bc8cff">📍 Por Ubicación de Capa</div>
+<div class="pad">
+  <div class="ubi-list">
+
+    <div class="ubi-row" style="border-color:rgba(63,185,80,.25)">
+      <div class="top">
+        <h4>Capa Intermedia <span style="font-size:10px;font-weight:400;color:var(--c-muted)">· mejor rendimiento</span></h4>
+        <span class="pct-badge" style="background:rgba(63,185,80,.12);color:#7ee787">93.1%</span>
+      </div>
+      <div class="meta">66 solicitudes · 3,132 ml solicitados · 7 rechazos · Terraplén 98% · Cunetas 100%</div>
+      <div class="ubi-track">
+        <div class="ubi-lib"  style="width:93.1%"></div>
+        <div class="ubi-rech" style="width:6.9%"></div>
+      </div>
+      <div class="ubi-track-label">
+        <span class="l-lib">Liberado 2,917 ml</span>
+        <span class="l-rech">Rechazado 215 ml</span>
+      </div>
+    </div>
+
+    <div class="ubi-row">
+      <div class="top">
+        <h4>Reproceso</h4>
+        <span class="pct-badge" style="background:rgba(63,185,80,.1);color:#7ee787">97.3%</span>
+      </div>
+      <div class="meta">11 solicitudes · 408 ml · 1 rechazo · todos los materiales en reproceso cumplen</div>
+      <div class="ubi-track">
+        <div class="ubi-lib"  style="width:97.3%"></div>
+        <div class="ubi-rech" style="width:2.7%"></div>
+      </div>
+    </div>
+
+    <div class="ubi-row" style="border-color:rgba(210,153,34,.2)">
+      <div class="top">
+        <h4>Capa Final <span style="font-size:10px;font-weight:400;color:var(--c-muted)">· mayor volumen</span></h4>
+        <span class="pct-badge" style="background:rgba(210,153,34,.1);color:#e3b341">83.4%</span>
+      </div>
+      <div class="meta">96 solicitudes · 8,267 ml solicitados · 10 rechazos · Base Cementada 100% · <b style="color:#ffa198">Terraplén solo 42%</b></div>
+      <div class="ubi-track">
+        <div class="ubi-lib"  style="width:83.4%"></div>
+        <div class="ubi-rech" style="width:12.1%"></div>
+        <div class="ubi-pend" style="width:4.5%"></div>
+      </div>
+      <div class="ubi-track-label">
+        <span class="l-lib">Liberado 6,897 ml</span>
+        <span class="l-rech">Rechazado 1,000 ml</span>
+      </div>
+    </div>
+
+    <div class="ubi-row" style="border-color:rgba(219,109,40,.2)">
+      <div class="top">
+        <h4>Capa Inicial <span style="font-size:10px;font-weight:400;color:var(--c-muted)">· peor rendimiento</span></h4>
+        <span class="pct-badge" style="background:rgba(219,109,40,.1);color:#ffa657">71.7%</span>
+      </div>
+      <div class="meta">51 solicitudes · 3,753 ml solicitados · 5 rechazos · Subbase 61% · <b style="color:#7ee787">Mejoramiento 100%</b></div>
+      <div class="ubi-track">
+        <div class="ubi-lib"  style="width:71.7%"></div>
+        <div class="ubi-rech" style="width:14.7%"></div>
+        <div class="ubi-pend" style="width:13.6%"></div>
+      </div>
+      <div class="ubi-track-label">
+        <span class="l-lib">Liberado 2,692 ml</span>
+        <span class="l-rech">Rechazado 551 ml</span>
+        <span class="l-pend">Pendiente 510 ml</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ SOLICITANTES ═══ -->
+<div class="section-label" style="--accent-color:#ec4899">👷 Rendimiento por Solicitante</div>
+<div class="pad">
+  <div class="sol-list">
+
+    <div class="sol-row">
+      <div class="sol-medal" style="background:linear-gradient(135deg,#0d2b6b,#1d4ed8);font-size:14px">1°</div>
+      <div class="sol-body">
+        <h4>JEKSON SOLANO QUINTERO</h4>
+        <div class="s-meta">Mayor volumen · Tramo 4 principalmente</div>
+        <div class="sol-metrics">
+          <div class="sol-m"><div class="v" style="color:#58a6ff">8,705</div><div class="l">ML solicitados</div></div>
+          <div class="sol-m"><div class="v" style="color:#3fb950">6,375</div><div class="l">ML liberados</div></div>
+          <div class="sol-m"><div class="v" style="color:#d29922">73.2%</div><div class="l">% lib.</div></div>
+          <div class="sol-m"><div class="v" style="color:#f85149">16.7%</div><div class="l">% rechazo</div></div>
+          <div class="sol-m"><div class="v" style="color:#7d8590">102</div><div class="l">Solicitudes</div></div>
+        </div>
+        <div class="sol-bar"><div class="sol-fill" style="width:73.2%;background:linear-gradient(90deg,#1d4ed8,#58a6ff)"></div></div>
+      </div>
+    </div>
+
+    <div class="sol-row">
+      <div class="sol-medal" style="background:linear-gradient(135deg,#1e1b4b,#4f46e5);font-size:14px">2°</div>
+      <div class="sol-body">
+        <h4>Jener VILLEGAS MANOSALVA</h4>
+        <div class="s-meta">Segundo en volumen · Tramos 3 y 4</div>
+        <div class="sol-metrics">
+          <div class="sol-m"><div class="v" style="color:#58a6ff">5,009</div><div class="l">ML solicitados</div></div>
+          <div class="sol-m"><div class="v" style="color:#3fb950">3,813</div><div class="l">ML liberados</div></div>
+          <div class="sol-m"><div class="v" style="color:#d29922">76.1%</div><div class="l">% lib.</div></div>
+          <div class="sol-m"><div class="v" style="color:#f85149">16.9%</div><div class="l">% rechazo</div></div>
+          <div class="sol-m"><div class="v" style="color:#7d8590">77</div><div class="l">Solicitudes</div></div>
+        </div>
+        <div class="sol-bar"><div class="sol-fill" style="width:76.1%;background:linear-gradient(90deg,#312e81,#6366f1)"></div></div>
+      </div>
+    </div>
+
+    <div class="sol-row" style="border-color:rgba(63,185,80,.3)">
+      <div class="sol-medal" style="background:linear-gradient(135deg,#052e16,#166534);font-size:14px">3°</div>
+      <div class="sol-body">
+        <h4>Julio César URIBE VILLA <span class="badge-best">⭐ Mejor</span></h4>
+        <div class="s-meta">Menor tasa de rechazo · 89.1% de efectividad</div>
+        <div class="sol-metrics">
+          <div class="sol-m"><div class="v" style="color:#58a6ff">3,942</div><div class="l">ML solicitados</div></div>
+          <div class="sol-m"><div class="v" style="color:#3fb950">3,512</div><div class="l">ML liberados</div></div>
+          <div class="sol-m"><div class="v" style="color:#3fb950">89.1%</div><div class="l">% lib.</div></div>
+          <div class="sol-m"><div class="v" style="color:#3fb950">7.6%</div><div class="l">% rechazo</div></div>
+          <div class="sol-m"><div class="v" style="color:#7d8590">66</div><div class="l">Solicitudes</div></div>
+        </div>
+        <div class="sol-bar"><div class="sol-fill" style="width:89.1%;background:linear-gradient(90deg,#065f46,#3fb950)"></div></div>
+      </div>
+    </div>
+
+    <div class="sol-row" style="border-color:rgba(248,81,73,.2)">
+      <div class="sol-medal" style="background:linear-gradient(135deg,#4a1d04,#9a3412);font-size:14px">4°</div>
+      <div class="sol-body">
+        <h4>FERNANDO ALBERTO VEGA NEME <span class="badge-warn">Mayor rechazo</span></h4>
+        <div class="s-meta">20% tasa de rechazo · 30 solicitudes</div>
+        <div class="sol-metrics">
+          <div class="sol-m"><div class="v" style="color:#58a6ff">2,339</div><div class="l">ML solicitados</div></div>
+          <div class="sol-m"><div class="v" style="color:#3fb950">1,790</div><div class="l">ML liberados</div></div>
+          <div class="sol-m"><div class="v" style="color:#d29922">76.5%</div><div class="l">% lib.</div></div>
+          <div class="sol-m"><div class="v" style="color:#f85149">20.0%</div><div class="l">% rechazo</div></div>
+          <div class="sol-m"><div class="v" style="color:#7d8590">30</div><div class="l">Solicitudes</div></div>
+        </div>
+        <div class="sol-bar"><div class="sol-fill" style="width:76.5%;background:linear-gradient(90deg,#7f1d1d,#ef4444)"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ ALERTAS ═══ -->
+<div class="section-label" style="--accent-color:#f85149">⚠️ Hallazgos Críticos</div>
+<div class="pad">
+  <div class="alerts">
+    <div class="alert-box crit">
+      <div class="ic">🔴</div>
+      <div>
+        <h4>Hitos con 0% de liberación — acción inmediata</h4>
+        <p><b>N11B, M221 y N190</b> registran 9 solicitudes con <b>503 ml rechazados al 100%</b>. Revisar condición de capa, criterio técnico de aceptación y cuadrilla asignada en estos hitos.</p>
+      </div>
+    </div>
+    <div class="alert-box crit">
+      <div class="ic">🐢</div>
+      <div>
+        <h4>Terreno Natural — cuello de botella crítico</h4>
+        <p>Ciclo promedio <b>34.6h</b> con P90 de <b>104 horas</b> y <b>36% de rechazo</b>. Laboratorio tarda en promedio <b>34.8h</b> entre topografía y resultado. El caso más lento tardó <b>145 horas</b>.</p>
+      </div>
+    </div>
+    <div class="alert-box warn">
+      <div class="ic">⚠️</div>
+      <div>
+        <h4>Terraplén en Capa Final — rendimiento bajo</h4>
+        <p>Solo <b>42%</b> de liberación en capa final, mientras que en Capa Intermedia el mismo material llega al <b>98%</b>. Diferencia de <b>56 puntos porcentuales</b> que requiere revisión del criterio de compactación final.</p>
+      </div>
+    </div>
+    <div class="alert-box warn">
+      <div class="ic">🧪</div>
+      <div>
+        <h4>Laboratorio — principal generador de NO CUMPLE</h4>
+        <p><b>10.7%</b> de resultados de laboratorio son NO CUMPLE, contra <b>4.7%</b> en topografía y <b>1.9%</b> en calidad. La capacidad o los criterios del laboratorio impactan directamente el ciclo y la tasa de rechazo.</p>
+      </div>
+    </div>
+    <div class="alert-box info">
+      <div class="ic">✅</div>
+      <div>
+        <h4>Buenas prácticas — Julio César Uribe Vila</h4>
+        <p>Con <b>89.1%</b> de liberación y solo <b>7.6%</b> de rechazo, presenta el mejor rendimiento. Analizar su metodología de preparación de capas podría servir como modelo para el resto del equipo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <b>Control de Obra — Ruta del Sol</b> · Infográfico generado a partir de datos reales<br>
+  Período: 01–27 Jun 2026 · 275 solicitudes analizadas · Capas asfálticas excluidas<br>
+  <span style="color:#3d444d">Análisis y diseño: Claude Code · 2026</span>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>
