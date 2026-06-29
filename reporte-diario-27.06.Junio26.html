@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Liberaciones — 27 Jun 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+  color: #111;
+  font-size: 14px;
+  padding-bottom: 32px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: #111827;
+  color: #fff;
+  padding: 18px 16px 14px;
+  position: sticky; top: 0; z-index: 10;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.header h1 { font-size: 16px; font-weight: 700; }
+.header .date-tag {
+  font-size: 11px; color: #9ca3af;
+  background: #1f2937; padding: 3px 10px; border-radius: 20px;
+}
+.summary-strip {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.sum-box {
+  background: #1f2937;
+  border-radius: 8px; padding: 8px 10px; text-align: center;
+}
+.sum-box .sv { font-size: 20px; font-weight: 800; line-height: 1; }
+.sum-box .sl { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px 16px 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: #6b7280;
+}
+.section-label .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+
+/* ── CARDS ── */
+.cards { padding: 0 12px; display: flex; flex-direction: column; gap: 10px; }
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
+}
+
+/* Card header - color = blocking area */
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  color: #fff;
+}
+.card-head.topo { background: #6d28d9; }
+.card-head.lab  { background: #d97706; }
+.card-head.prod { background: #2563eb; }
+.card-head.cal  { background: #059669; }
+.card-head.lib  { background: #e5e7eb; }
+
+.area-name {
+  font-size: 13px; font-weight: 800; letter-spacing: .3px;
+  display: flex; align-items: center; gap: 6px;
+}
+.area-name .ic { font-size: 14px; }
+
+.horas-badge {
+  background: rgba(255,255,255,.2);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 4px;
+}
+.horas-badge.urgente { background: rgba(255,255,255,.3); animation: urgente-pulse 1.5s infinite; }
+@keyframes urgente-pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+/* Card meta row */
+.card-meta {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px 0;
+  font-size: 12px; color: #6b7280;
+  flex-wrap: wrap;
+}
+.card-meta .tramo-badge {
+  background: #dbeafe; color: #1d4ed8;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 5px;
+}
+.card-meta .hito-badge {
+  background: #f3f4f6; color: #111;
+  font-size: 12px; font-weight: 700;
+  padding: 2px 7px; border-radius: 5px;
+}
+.card-meta .cod { color: #9ca3af; font-size: 11px; }
+.card-meta .fecha { color: #9ca3af; font-size: 11px; margin-left: auto; }
+
+/* Card body */
+.card-body {
+  padding: 10px 14px;
+  border-top: 1px solid #f3f4f6;
+  margin-top: 8px;
+}
+.material-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 4px;
+}
+.material-name { font-size: 15px; font-weight: 700; color: #111; }
+.ubicacion-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 5px;
+}
+.ubi-final  { background: #fef3c7; color: #92400e; }
+.ubi-inicial{ background: #dbeafe; color: #1e40af; }
+
+.abscisas-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 6px; border-top: 1px solid #f3f4f6; margin-top: 6px;
+}
+.abscisas {
+  font-size: 14px; font-weight: 600; color: #374151;
+  font-variant-numeric: tabular-nums;
+}
+.abscisas .arrow { color: #9ca3af; margin: 0 4px; }
+.ml-value {
+  font-size: 22px; font-weight: 900; color: #111;
+  display: flex; align-items: baseline; gap: 3px;
+}
+.ml-value span { font-size: 12px; font-weight: 600; color: #6b7280; }
+
+/* Firmas row */
+.firmas-row {
+  display: flex; gap: 6px;
+  padding: 8px 14px 12px;
+  background: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+}
+.firma-pill {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.firma-ok    { background: #d1fae5; color: #065f46; }
+.firma-pend  { background: #ede9fe; color: #5b21b6; border: 1.5px solid #7c3aed; }
+.firma-noap  { background: #f3f4f6; color: #9ca3af; }
+.firma-noap-warn { background: #fff7ed; color: #c2410c; border: 1px dashed #f97316; }
+
+/* Liberados */
+.card-lib { background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.card-lib-head {
+  background: #f0fdf4; padding: 8px 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #d1fae5;
+}
+.lib-badge { color: #065f46; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; gap: 4px; }
+.card-lib-body {
+  padding: 8px 14px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.lib-info .mat { font-size: 14px; font-weight: 700; }
+.lib-info .sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+.lib-ml { font-size: 20px; font-weight: 900; color: #111; }
+.lib-ml span { font-size: 11px; color: #6b7280; }
+
+/* Alerta anomalia */
+.anomalia {
+  font-size: 10px; color: #92400e;
+  background: #fff7ed; border: 1px solid #fed7aa;
+  border-radius: 6px; padding: 3px 8px;
+  margin: 0 14px 10px;
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* Divider */
+.divider { height: 1px; background: #e5e7eb; margin: 0 16px; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-top">
+    <h1>Liberaciones · Capa Final</h1>
+    <span class="date-tag">25 · 26 · 27 Jun 2026</span>
+  </div>
+  <div class="summary-strip">
+    <div class="sum-box">
+      <div class="sv" style="color:#ef4444">3</div>
+      <div class="sl">Pendientes</div>
+    </div>
+    <div class="sum-box">
+      <div class="sv" style="color:#ef4444">180</div>
+      <div class="sl">ML Retenidos</div>
+    </div>
+    <div class="sum-box">
+      <div class="sv" style="color:#a78bfa">TOPO</div>
+      <div class="sl">Área crítica</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ PENDIENTES ══════════════════════════ -->
+<div class="section-label">
+  <div class="dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444"></div>
+  Pendientes — cobrar firma
+</div>
+
+<div class="cards">
+
+  <!-- #34038 · 62h · TOPOGRAFÍA -->
+  <div class="card">
+    <div class="card-head topo">
+      <div class="area-name"><span class="ic">📐</span> TOPOGRAFÍA</div>
+      <div class="horas-badge urgente">⏱ 62h 17min</div>
+    </div>
+    <div class="card-meta">
+      <span class="tramo-badge">T4</span>
+      <span class="hito-badge">N21A</span>
+      <span class="cod">#34038</span>
+      <span class="fecha">25 Jun</span>
+    </div>
+    <div class="card-body">
+      <div class="material-row">
+        <span class="material-name">Corona</span>
+        <span class="ubicacion-badge ubi-final">Capa Final</span>
+      </div>
+      <div class="abscisas-row">
+        <div class="abscisas">33400<span class="arrow">→</span>33440</div>
+        <div class="ml-value">40<span>ml</span></div>
+      </div>
+    </div>
+    <div class="anomalia">⚠️ Lab firmó antes que Topo — verificar orden de firmas</div>
+    <div class="firmas-row">
+      <span class="firma-pill firma-ok">✅ Producción</span>
+      <span class="firma-pill firma-pend">⏳ Topografía</span>
+      <span class="firma-pill firma-ok">✅ Laboratorio</span>
+      <span class="firma-pill firma-noap">➖ Calidad</span>
+    </div>
+  </div>
+
+  <!-- #34085 · 38h · TOPOGRAFÍA -->
+  <div class="card">
+    <div class="card-head topo">
+      <div class="area-name"><span class="ic">📐</span> TOPOGRAFÍA</div>
+      <div class="horas-badge">⏱ 38h 42min</div>
+    </div>
+    <div class="card-meta">
+      <span class="tramo-badge">T4</span>
+      <span class="hito-badge">N18C</span>
+      <span class="cod">#34085</span>
+      <span class="fecha">26 Jun</span>
+    </div>
+    <div class="card-body">
+      <div class="material-row">
+        <span class="material-name">Subbase</span>
+        <span class="ubicacion-badge ubi-final">Capa Final</span>
+      </div>
+      <div class="abscisas-row">
+        <div class="abscisas">13120<span class="arrow">→</span>13140</div>
+        <div class="ml-value">20<span>ml</span></div>
+      </div>
+    </div>
+    <div class="anomalia">⚠️ Lab firmó antes que Topo — verificar orden de firmas</div>
+    <div class="firmas-row">
+      <span class="firma-pill firma-ok">✅ Producción</span>
+      <span class="firma-pill firma-pend">⏳ Topografía</span>
+      <span class="firma-pill firma-ok">✅ Laboratorio</span>
+      <span class="firma-pill firma-noap">➖ Calidad</span>
+    </div>
+  </div>
+
+  <!-- #34112 · 16h · TOPOGRAFÍA -->
+  <div class="card">
+    <div class="card-head topo">
+      <div class="area-name"><span class="ic">📐</span> TOPOGRAFÍA</div>
+      <div class="horas-badge">⏱ 16h 36min</div>
+    </div>
+    <div class="card-meta">
+      <span class="tramo-badge">T4</span>
+      <span class="hito-badge">N22A</span>
+      <span class="cod">#34112</span>
+      <span class="fecha">27 Jun</span>
+    </div>
+    <div class="card-body">
+      <div class="material-row">
+        <span class="material-name">Subbase</span>
+        <span class="ubicacion-badge ubi-final">Capa Final</span>
+      </div>
+      <div class="abscisas-row">
+        <div class="abscisas">42310<span class="arrow">→</span>42430</div>
+        <div class="ml-value">120<span>ml</span></div>
+      </div>
+    </div>
+    <div class="anomalia">⚠️ Lab firmó antes que Topo — verificar orden de firmas</div>
+    <div class="firmas-row">
+      <span class="firma-pill firma-ok">✅ Producción</span>
+      <span class="firma-pill firma-pend">⏳ Topografía</span>
+      <span class="firma-pill firma-ok">✅ Laboratorio</span>
+      <span class="firma-pill firma-noap">➖ Calidad</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════ LIBERADOS ══════════════════════════ -->
+<div class="section-label" style="margin-top:8px">
+  <div class="dot" style="background:#10b981;box-shadow:0 0 6px #10b981"></div>
+  Liberados — 25 · 26 · 27 Jun · 700 ml
+</div>
+
+<div class="cards">
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T4 · N201 · #34111 · 27 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Corona</div>
+        <div class="sub">18930 → 19030 · Capa Final</div>
+      </div>
+      <div class="lib-ml">100<span>ml</span></div>
+    </div>
+  </div>
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T4 · N221 · #34097 · 26 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Subbase</div>
+        <div class="sub">42430 → 42580 · Capa Final</div>
+      </div>
+      <div class="lib-ml">150<span>ml</span></div>
+    </div>
+  </div>
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T4 · N21A · #34098 · 26 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Base</div>
+        <div class="sub">34130 → 34260 · Capa Final</div>
+      </div>
+      <div class="lib-ml">130<span>ml</span></div>
+    </div>
+  </div>
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T3 · N17D · #34086 · 26 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Corona</div>
+        <div class="sub">66370 → 66430 · Capa Final</div>
+      </div>
+      <div class="lib-ml">60<span>ml</span></div>
+    </div>
+  </div>
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T4 · N201 · #34029 · 25 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Corona</div>
+        <div class="sub">19030 → 19150 · Capa Final</div>
+      </div>
+      <div class="lib-ml">120<span>ml</span></div>
+    </div>
+  </div>
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T4 · M181 · #34040 · 25 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Subbase</div>
+        <div class="sub">3490 → 3590 · Capa Final</div>
+      </div>
+      <div class="lib-ml">100<span>ml</span></div>
+    </div>
+  </div>
+
+  <div class="card-lib">
+    <div class="card-lib-head">
+      <span class="lib-badge">✅ LIBERADO</span>
+      <span style="font-size:11px;color:#6b7280">T3 · M14A · #34031 · 25 Jun</span>
+    </div>
+    <div class="card-lib-body">
+      <div class="lib-info">
+        <div class="mat">Base</div>
+        <div class="sub">160 → 200 · Capa Final</div>
+      </div>
+      <div class="lib-ml">40<span>ml</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
