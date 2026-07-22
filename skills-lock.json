@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "unit-economics": {
+      "source": "anthropics/financial-services",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/private-equity/skills/unit-economics/SKILL.md",
+      "computedHash": "4445a8301c2152555e6b9fc1ae4bca7bbc58c944962b44b07eb1d609f0a33274"
+    }
+  }
+}
